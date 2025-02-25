@@ -1,0 +1,12 @@
+- name: Установка пакетов
+  hosts: all
+  tasks:
+    - name: Установить пакет cowsay
+      dnf:
+        name: cowsay
+        state: present
+
+    - name: Установить пакет cmatrix
+      dnf:
+        name: cmatrix
+        state: present

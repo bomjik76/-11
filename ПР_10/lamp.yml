@@ -1,0 +1,44 @@
+---
+- name: Установка и настройка LAMP
+  hosts: lamp
+  become: yes
+  tasks:
+    - name: Установка Apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: Запуск и включение Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Установка MySQL
+      yum:
+        name: mysql-server
+        state: present
+
+    - name: Запуск и включение MySQL
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+
+    - name: Установка PHP
+      yum:
+        name: php
+        state: present
+
+    - name: Установка дополнительных модулей PHP
+      yum:
+        name:
+          - php-mysql
+          - php-gd
+          - php-xml
+        state: present
+
+    - name: Перезапуск Apache для применения изменений
+      service:
+        name: httpd
+        state: restarted

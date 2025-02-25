@@ -1,0 +1,35 @@
+---
+- name: Установка и настройка Docker
+  hosts: docker
+  become: yes
+  tasks:
+    - name: Установка необходимых пакетов
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Добавление репозитория Docker
+      command: >
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        warn: false
+
+    - name: Установка Docker
+      yum:
+        name: docker-ce
+        state: present
+
+    - name: Запуск и включение Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Добавление пользователя в группу docker
+      user:
+        name: your_user
+        group: docker
+        append: yes 

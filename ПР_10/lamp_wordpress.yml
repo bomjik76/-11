@@ -1,0 +1,105 @@
+---
+- name: Установка и настройка LAMP + WordPress
+  hosts: lamp
+  become: yes
+  vars:
+    wordpress_db_name: wordpress
+    wordpress_db_user: wordpressuser
+    wordpress_db_password: your_password
+    wordpress_admin_user: admin
+    wordpress_admin_password: admin_password
+    wordpress_admin_email: admin@example.com
+
+  tasks:
+    - name: Установка Apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: Запуск и включение Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Установка MySQL
+      yum:
+        name: mysql-server
+        state: present
+
+    - name: Запуск и включение MySQL
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+
+    - name: Установка PHP и необходимых модулей
+      yum:
+        name:
+          - php
+          - php-mysql
+          - php-gd
+          - php-xml
+          - php-mbstring
+        state: present
+
+    - name: Перезапуск Apache для применения изменений
+      service:
+        name: httpd
+        state: restarted
+
+    - name: Установка WordPress
+      get_url:
+        url: https://wordpress.org/latest.tar.gz
+        dest: /tmp/wordpress.tar.gz
+
+    - name: Распаковка WordPress
+      unarchive:
+        src: /tmp/wordpress.tar.gz
+        dest: /var/www/html/
+        remote_src: yes
+
+    - name: Настройка прав доступа к WordPress
+      file:
+        path: /var/www/html/wordpress
+        state: directory
+        owner: apache
+        group: apache
+        mode: '0755'
+
+    - name: Создание базы данных для WordPress
+      mysql_db:
+        name: "{{ wordpress_db_name }}"
+        state: present
+
+    - name: Создание пользователя базы данных для WordPress
+      mysql_user:
+        name: "{{ wordpress_db_user }}"
+        password: "{{ wordpress_db_password }}"
+        priv: "{{ wordpress_db_name }}.*:ALL"
+        state: present
+
+    - name: Настройка wp-config.php
+      copy:
+        dest: /var/www/html/wordpress/wp-config.php
+        content: |
+          <?php
+          define('DB_NAME', '{{ wordpress_db_name }}');
+          define('DB_USER', '{{ wordpress_db_user }}');
+          define('DB_PASSWORD', '{{ wordpress_db_password }}');
+          define('DB_HOST', 'localhost');
+          define('DB_CHARSET', 'utf8');
+          define('DB_COLLATE', '');
+          $table_prefix = 'wp_';
+          define('WP_DEBUG', false);
+          if ( !defined('ABSPATH') )
+              define('ABSPATH', dirname(__FILE__) . '/');
+          require_once(ABSPATH . 'wp-settings.php');
+      owner: apache
+      group: apache
+      mode: '0644'
+
+    - name: Перезапуск Apache для применения изменений
+      service:
+        name: httpd
+        state: restarted 

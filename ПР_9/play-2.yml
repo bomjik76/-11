@@ -1,0 +1,11 @@
+- name: Обновление индекса пакетов и устаревших пакетов
+  hosts: all
+  tasks:
+    - name: Обновить индекс пакетов
+      dnf:
+        update_cache: yes
+
+    - name: Обновить все устаревшие пакеты
+      dnf:
+        name: '*'
+        state: latest

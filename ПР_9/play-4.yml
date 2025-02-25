@@ -1,0 +1,12 @@
+- name: Создание папок в домашней директории
+  hosts: all
+  tasks:
+    - name: Создать папку ProjectNN
+      file:
+        path: "~/ProjectNN"
+        state: directory
+
+    - name: Создать папку AnsibleNN
+      file:
+        path: "~/AnsibleNN"
+        state: directory

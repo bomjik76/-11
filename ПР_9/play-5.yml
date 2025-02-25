@@ -1,0 +1,12 @@
+- name: Копирование файлов в созданные директории
+  hosts: all
+  tasks:
+    - name: Копировать файл project.txt в ProjectNN
+      copy:
+        src: /path/to/project.txt
+        dest: ~/ProjectNN/project.txt
+
+    - name: Копировать файл ansible.txt в AnsibleNN
+      copy:
+        src: /path/to/ansible.txt
+        dest: ~/AnsibleNN/ansible.txt

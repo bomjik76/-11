@@ -1,0 +1,25 @@
+- name: Замена дефолтной страницы Apache
+  hosts: all
+  tasks:
+    - name: Создать кастомную страницу
+      copy:
+        content: |
+          <html>
+            <head>
+              <title>Моя страница</title>
+            </head>
+            <body>
+              <h1>Фамилия: Некрасов</h1>
+              <h1>Имя: Павел</h1>
+              <h1>Группа: С1-21</h1>
+            </body>
+          </html>
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: '0644'
+
+    - name: Перезапустить службу httpd
+      systemd:
+        name: httpd
+        state: restarted

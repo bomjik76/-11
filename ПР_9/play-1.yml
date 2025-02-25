@@ -1,0 +1,24 @@
+---
+- name: Проверка целостности и качества соединения с Manage node
+  hosts: manage_node
+  tasks:
+    - name: Проверка доступности порта
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22  # Замените на нужный порт
+        timeout: 10
+      register: port_check
+
+    - name: Проверка целостности соединения
+      ping:
+      when: port_check is succeeded
+
+    - name: Вывод результата проверки
+      debug:
+        msg: "Соединение с {{ inventory_hostname }} успешно!"
+      when: port_check is succeeded
+
+    - name: Вывод ошибки
+      debug:
+        msg: "Не удалось установить соединение с {{ inventory_hostname }}."
+      when: port_check is failed

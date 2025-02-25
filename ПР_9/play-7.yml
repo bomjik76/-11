@@ -1,0 +1,13 @@
+- name: Установка HTTPD (Apache2)
+  hosts: all
+  tasks:
+    - name: Установить пакет httpd
+      dnf:
+        name: httpd
+        state: present
+
+    - name: Запустить и включить службу httpd
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
